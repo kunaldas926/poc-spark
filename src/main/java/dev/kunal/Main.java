@@ -6,7 +6,8 @@ import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.model.ListObjectsV2Result;
 import com.amazonaws.services.s3.model.S3ObjectSummary;
 import lombok.extern.slf4j.Slf4j;
-import net.spy.memcached.MemcachedClient;
+//import net.spy.memcached.MemcachedClient;
+import org.apache.commons.lang3.RandomUtils;
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
@@ -34,9 +35,9 @@ public class Main {
     private static final String OUTPUT_FOLDER = "output";
     private static final String MEMCACHED_HOST = "localhost";
     private static final Integer MEMCACHED_PORT = 4040;
-    private static final Integer SPARK_MASTER_PORT = 7077;
+    private static final Integer SPARK_MASTER_PORT = 4040;
 
-    public static void main(String[] args)  {
+    public static void main(String[] args) {
 
         String ip = null;
         try {
@@ -45,17 +46,17 @@ public class Main {
         } catch (UnknownHostException e) {
             ip = "localhost";
         }
-        String masterIp = SPARK_PROTOCOL.concat(ip).concat(":").concat(String.valueOf(SPARK_MASTER_PORT));
+        String masterIp = SPARK_PROTOCOL.concat("65.0.251.31").concat(":").concat(String.valueOf(SPARK_MASTER_PORT));
 
         SparkConf sparkConf = new SparkConf()
                 .setAppName(Main.class.getName())
-                .setMaster("spark://65.0.251.31:7077");
+                .setMaster(masterIp);
 
         JavaSparkContext javaSparkContext = null;
-        MemcachedClient memcachedClient = null;
+//        MemcachedClient memcachedClient = null;
         try {
             javaSparkContext = new JavaSparkContext(sparkConf);
-            memcachedClient = new MemcachedClient(new InetSocketAddress(MEMCACHED_HOST, MEMCACHED_PORT));
+//            memcachedClient = new MemcachedClient(new InetSocketAddress(MEMCACHED_HOST, MEMCACHED_PORT));
 
 
             SparkSession sparkSession = SparkSession.builder()
@@ -95,11 +96,13 @@ public class Main {
                             .saveAsTextFile(
                                     PROTOCOL.concat(S3_BUCKET_NAME)
                                             .concat(S3_SEPARATOR)
+                                            .concat(RandomUtils.nextBytes(32).toString())
+                                            .concat(S3_SEPARATOR)
                                             .concat(OUTPUT_FOLDER)
                                             .concat(S3_SEPARATOR)
                                             .concat(key)
                             );
-                    Objects.requireNonNull(memcachedClient).set(key, 0, javaRDD.collect());
+//                    Objects.requireNonNull(memcachedClient).set(key, 0, javaRDD.collect());
 //                    log.info(memcachedClient.get(key).toString());
                     log.info(javaRDD.collect().toString());
                     log.info(String.valueOf(javaRDD.count()));
@@ -110,8 +113,8 @@ public class Main {
         } finally {
             if (Objects.nonNull(javaSparkContext))
                 javaSparkContext.close();
-            if (Objects.nonNull(memcachedClient))
-                memcachedClient.shutdown();
+//            if (Objects.nonNull(memcachedClient))
+//                memcachedClient.shutdown();
         }
     }
 }

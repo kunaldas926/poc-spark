@@ -1,4 +1,4 @@
-package dev.kunal;
+package devi.kunal;
 
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.s3.AmazonS3;
@@ -17,7 +17,6 @@ import org.apache.spark.sql.SparkSession;
 import scala.Tuple2;
 
 import java.net.InetAddress;
-import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -50,7 +49,7 @@ public class Main {
 
         SparkConf sparkConf = new SparkConf()
                 .setAppName(Main.class.getName())
-                .setMaster(masterIp);
+                .setMaster("spark://65.0.251.31:7077");
 
         JavaSparkContext javaSparkContext = null;
 //        MemcachedClient memcachedClient = null;

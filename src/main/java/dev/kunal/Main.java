@@ -1,4 +1,4 @@
-package com.antelope.com;
+package dev.kunal;
 
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.s3.AmazonS3;
@@ -15,7 +15,9 @@ import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.SparkSession;
 import scala.Tuple2;
 
+import java.net.InetAddress;
 import java.net.InetSocketAddress;
+import java.net.UnknownHostException;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
@@ -28,15 +30,26 @@ public class Main {
     private static final String S3_BUCKET_NAME = "spark-calcite-demo-bucket";
     private static final String S3_SEPARATOR = "/";
     private static final String PROTOCOL = "s3a://";
+    private static final String SPARK_PROTOCOL = "spark://";
     private static final String OUTPUT_FOLDER = "output";
     private static final String MEMCACHED_HOST = "localhost";
     private static final Integer MEMCACHED_PORT = 4040;
+    private static final Integer SPARK_MASTER_PORT = 4040;
 
-    public static void main(String[] args) {
+    public static void main(String[] args)  {
+
+        String ip = null;
+        try {
+            ip = InetAddress.getLocalHost().getHostAddress();
+            System.out.println("Current IP address : " + ip);
+        } catch (UnknownHostException e) {
+            ip = "localhost";
+        }
+        String masterIp = SPARK_PROTOCOL.concat(ip).concat(":").concat(String.valueOf(SPARK_MASTER_PORT));
 
         SparkConf sparkConf = new SparkConf()
                 .setAppName(Main.class.getName())
-                .setMaster("local[1]");
+                .setMaster(masterIp);
 
         JavaSparkContext javaSparkContext = null;
         MemcachedClient memcachedClient = null;

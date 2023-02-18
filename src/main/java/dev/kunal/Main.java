@@ -35,7 +35,7 @@ public class Main {
     private static final String OUTPUT_FOLDER = "output";
     private static final String MEMCACHED_HOST = "localhost";
     private static final Integer MEMCACHED_PORT = 4040;
-    private static final Integer SPARK_MASTER_PORT = 4040;
+    private static final Integer SPARK_MASTER_PORT = 7077;
 
     public static void main(String[] args) {
 

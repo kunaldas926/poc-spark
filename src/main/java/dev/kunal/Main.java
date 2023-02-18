@@ -34,7 +34,7 @@ public class Main {
     private static final String OUTPUT_FOLDER = "output";
     private static final String MEMCACHED_HOST = "localhost";
     private static final Integer MEMCACHED_PORT = 4040;
-    private static final Integer SPARK_MASTER_PORT = 4040;
+    private static final Integer SPARK_MASTER_PORT = 7077;
 
     public static void main(String[] args)  {
 
@@ -49,7 +49,7 @@ public class Main {
 
         SparkConf sparkConf = new SparkConf()
                 .setAppName(Main.class.getName())
-                .setMaster(masterIp);
+                .setMaster("spark://65.0.251.31:7077");
 
         JavaSparkContext javaSparkContext = null;
         MemcachedClient memcachedClient = null;
